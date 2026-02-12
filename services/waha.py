@@ -25,7 +25,7 @@ class Waha:
                 url=url,
                 json=payload,
                 headers=self.headers)
-        print('Mensagem Enviada: ', response.status_code, response.text)
+        print('Mensagem Enviada: ', response.status_code, message)
 
     async def start_typing(self, chat_id):
         url = f'{self.__api_url}/api/startTyping'
@@ -39,7 +39,17 @@ class Waha:
                 url=url,
                 json=payload,
                 headers=self.headers)
-        print('Start_Typing: ', response.status_code, response.text)
+        print('Start_Typing: ', response.status_code)
+
+    async def get_history_messages(self, chat_id, limit):
+        url = f'{self.__api_url}/api/default/chats/{chat_id}/messages?limit={limit}&downloadMedia=false'
+
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            response = await client.post(
+                url=url)
+        data = response.json()
+
+        return data.get("data", [])
 
     async def stop_typing(self, chat_id):
         url = f'{self.__api_url}/api/stopTyping'
@@ -53,4 +63,4 @@ class Waha:
                 url=url,
                 json=payload,
                 headers=self.headers)
-        print('Stop_Typing: ', response.status_code, response.text)
+        print('Stop_Typing: ', response.status_code)
